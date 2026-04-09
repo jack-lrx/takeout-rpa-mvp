@@ -127,6 +127,50 @@ GET /mock/order-status
 PYTHONPATH=. python rpa/login_and_listen.py --demo
 ```
 
+### 本地 Playwright 验证页
+
+如果你暂时没有真实外卖平台后台，可以用仓库内置的本地验证页来测试 Playwright 浏览器监听能力。
+
+1. 启动 API：
+
+```bash
+PYTHONPATH=. uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+2. 启动 RPA，并把商家后台地址指向本地验证页：
+
+```bash
+PYTHONPATH=. python rpa/login_and_listen.py \
+  --platform meituan \
+  --merchant-url "http://127.0.0.1:8000/playwright-demo"
+```
+
+本地验证页会在浏览器加载后自动发起：
+
+- 一个带 `order` 关键字的 HTTP 请求
+- 一个带 `delivery/status` 关键字的 HTTP 请求
+- 一个带 `delivery/status` 关键字的 WebSocket 消息
+
+这样可以验证：
+
+- Playwright 是否成功打开浏览器页面
+- `page.on("response")` 是否成功监听接口响应
+- `page.on("websocket")` 是否成功监听 WebSocket 消息
+- 监听结果是否进入解析、SQLite 入库和 ERP Mock 推送链路
+
+你也可以直接在浏览器打开：
+
+```text
+http://127.0.0.1:8000/playwright-demo
+```
+
+然后查看：
+
+- `GET /mock/orders`
+- `GET /mock/order-status`
+
+确认本地演示数据是否已经被接收。
+
 ### 真实监听模式
 
 ```bash

@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.api.erp_mock import router as erp_mock_router
 from app.api.health import router as health_router
+from app.api.playwright_demo import router as playwright_demo_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger
 from app.services.store import SQLiteStore
@@ -36,6 +37,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(health_router)
     app.include_router(erp_mock_router)
+    app.include_router(playwright_demo_router)
     return app
 
 
